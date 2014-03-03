@@ -1,15 +1,16 @@
-From 00f5142ea137adf13f21a52dbaebdf0ffd3c80e9 Mon Sep 17 00:00:00 2001
+From cc16a3e6caa597671468ad2af5d8adfa3d2391f6 Mon Sep 17 00:00:00 2001
 From: Vincenzo Aliberti <vincenzo.aliberti@gmail.com>
-Date: Fri, 17 Jan 2014 10:12:26 +0100
+Date: Mon, 3 Mar 2014 10:38:22 +0100
 Subject: mtd: lpddr: add driver for LPDDR2-NVM PCM memories
 
 Signed-off-by: Vincenzo Aliberti <vincenzo.aliberti@gmail.com>
 
 ---
  drivers/mtd/lpddr/Kconfig      |   12 +-
+ drivers/mtd/lpddr/Makefile     |    1 +
  drivers/mtd/lpddr/lpddr2_nvm.c |  504 ++++++++++++++++++++++++++++++++++++++++
  include/uapi/mtd/mtd-abi.h     |    1 +
- 3 files changed, 515 insertions(+), 2 deletions(-)
+ 4 files changed, 516 insertions(+), 2 deletions(-)
  create mode 100644 drivers/mtd/lpddr/lpddr2_nvm.c
 
 diff --git a/drivers/mtd/lpddr/Kconfig b/drivers/mtd/lpddr/Kconfig
@@ -37,9 +38,18 @@ index 265f969..94a7f30 100644
 +	  (Low power double data rate 2) interface.
 +
  endmenu
+diff --git a/drivers/mtd/lpddr/Makefile b/drivers/mtd/lpddr/Makefile
+index da48e46..881d440 100644
+--- a/drivers/mtd/lpddr/Makefile
++++ b/drivers/mtd/lpddr/Makefile
+@@ -4,3 +4,4 @@
+ 
+ obj-$(CONFIG_MTD_QINFO_PROBE)	+= qinfo_probe.o
+ obj-$(CONFIG_MTD_LPDDR)	+= lpddr_cmds.o
++obj-$(CONFIG_MTD_LPDDR2_NVM) += lpddr2_nvm.o
 diff --git a/drivers/mtd/lpddr/lpddr2_nvm.c b/drivers/mtd/lpddr/lpddr2_nvm.c
 new file mode 100644
-index 0000000..23377c8
+index 0000000..5d52c47
 --- /dev/null
 +++ b/drivers/mtd/lpddr/lpddr2_nvm.c
 @@ -0,0 +1,504 @@
@@ -69,7 +79,7 @@ index 0000000..23377c8
 + * 02110-1301, USA.
 + */
 +
-+#define pr_fmt(fmt) KBUILD_MODNAME ":%s: " fmt, __func__
++#define pr_fmt(fmt) KBUILD_MODNAME ": %s: " fmt, __func__
 +
 +#include <linux/init.h>
 +#include <linux/io.h>
@@ -498,7 +508,7 @@ index 0000000..23377c8
 +	*map = (struct map_info) {
 +		.virt		= devm_ioremap_nocache(&pdev->dev,
 +				add_range->start, (add_range->end -
-+				add_range->start a + 1)),
++				add_range->start + 1)),
 +		.name		= pdev->dev.init_name,
 +		.phys		= add_range->start,
 +		.size		= add_range->end - add_range->start + 1,
